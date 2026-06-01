@@ -337,7 +337,7 @@
   <div class="live-dot"></div>
   <div>
     <div class="header-title">CPP &amp; Chemicals Americas</div>
-    <div class="header-sub">Vortexa live voyages · Generated 01 Jun 2026 16:48 · Vortexa Live  - Jun 1, 2026 - 1780346892.csv</div>
+    <div class="header-sub">Vortexa live voyages · Generated 01 Jun 2026 17:03 · Vortexa Live  - Jun 1, 2026 - 1780346892.csv</div>
   </div>
   <div class="header-badge" id="summary-badge">
     <span id="b-voyages">—</span> voyages ·
@@ -360,7 +360,10 @@
     <div class="pill" data-prod="Lube Oils">Lube Oils</div>
     <div class="pill" data-prod="Chemicals">Chemicals</div>
   </div>
-  <!-- Grade pills (Chemicals only) -->
+  <!-- Grade pills + search (Chemicals only) -->
+  <div id="grade-search-wrap" style="display:none;margin-bottom:6px;">
+    <input id="grade-search" class="search-box" style="width:220px;font-size:11px;" placeholder="Search chemical grade…" oninput="filterGradePills()">
+  </div>
   <div id="grade-bar"></div>
 </div>
 
@@ -438,6 +441,10 @@
 
 <!-- ROW 3: Voyage Table -->
 <div class="panel">
+  <div id="filter-summary" style="display:none;align-items:center;gap:10px;margin-bottom:10px;padding:8px 14px;background:#1A1E29;border:1px solid #252A38;border-radius:6px;font-size:11px;color:#7A849E;">
+    <span style="color:#4F8EF7;font-weight:600;flex-shrink:0">▸ Active filters:</span>
+    <span id="filter-summary-text" style="color:#B0BAD0"></span>
+  </div>
   <div class="table-controls">
     <input class="search-box" id="tbl-search" placeholder="Vessel name or IMO…" oninput="renderTable()">
     <div class="status-tabs" id="status-tabs">
@@ -779,29 +786,65 @@ function renderSegments() {
 // ── Grade pills ───────────────────────────────────────────────────────────────
 function renderGrades() {
   const bar = document.getElementById("grade-bar");
-  if (prodF !== "Chemicals") { bar.className = ""; gradeF = ""; return; }
+  const searchWrap = document.getElementById("grade-search-wrap");
+  if (prodF !== "Chemicals") {
+    bar.className = ""; gradeF = "";
+    if (searchWrap) searchWrap.style.display = "none";
+    return;
+  }
   bar.className = "visible";
-  const base = ALL_ROWS.filter(v => matchBase(v));
+  if (searchWrap) searchWrap.style.display = "block";
+  const base = ALL_ROWS.filter(v => {
+    if (vtF !== "All" && v.cls !== vtF) return false;
+    if (F.charterer && v.charterer !== F.charterer) return false;
+    if (F.shipper   && v.shipper   !== F.shipper)   return false;
+    if (F.route && (v.origReg !== F.route.o || v.destReg !== F.route.d)) return false;
+    if (F.orig && getOrigVal(v) !== F.orig) return false;
+    if (F.dest && getDestVal(v) !== F.dest) return false;
+    if (v.product !== "Chemicals") return false;
+    return true;
+  });
   const counts = {};
   base.forEach(v => { if(v.grade) counts[v.grade]=(counts[v.grade]||0)+1; });
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  bar.innerHTML = sorted.map(([g,c]) => {
+  window._allGrades = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  renderGradePills();
+}
+
+function renderGradePills() {
+  const bar = document.getElementById("grade-bar");
+  const q = (document.getElementById("grade-search")?.value||"").toLowerCase();
+  const grades = (window._allGrades||[]).filter(([g])=> !q || g.toLowerCase().includes(q));
+  bar.innerHTML = grades.map(([g,c]) => {
     const active = gradeF===g?"active":"";
-    return `<div class="grade-pill ${active}" onclick="toggleGrade(${JSON.stringify(g)})">${g} (${c})</div>`;
+    return `<div class="grade-pill ${active}" onclick="toggleGrade(${JSON.stringify(g)})" style="cursor:pointer">${g} <span style="opacity:.6">(${c})</span></div>`;
   }).join("");
 }
 
 // ── Filter chips ──────────────────────────────────────────────────────────────
 function renderChips() {
   const chips = [];
-  if (F.route)     chips.push([`Route: ${F.route.r}`,    () => { F.route=null; render(); }]);
-  if (F.orig)      chips.push([`Origin: ${F.orig}`,       () => { F.orig=null;  render(); }]);
-  if (F.dest)      chips.push([`Dest: ${F.dest}`,         () => { F.dest=null;  render(); }]);
-  if (F.charterer) chips.push([`Charterer: ${F.charterer}`,() => { F.charterer=null; render(); }]);
-  if (F.shipper)   chips.push([`Shipper: ${F.shipper}`,   () => { F.shipper=null; render(); }]);
-  if (gradeF)      chips.push([`Grade: ${gradeF}`,        () => { gradeF=""; render(); }]);
+  if (prodF !== "All")   chips.push([`Product: ${prodF}`,       () => { prodF="All"; gradeF=""; document.querySelectorAll("#prod-bar .pill").forEach(p=>p.classList.toggle("active",p.dataset.prod==="All")); render(); }]);
+  if (vtF !== "All")     chips.push([`Segment: ${vtF}`,         () => { vtF="All"; document.querySelectorAll("#vt-bar .pill").forEach(p=>p.classList.toggle("active",p.dataset.vt==="All")); render(); }]);
+  if (F.route)           chips.push([`Route: ${F.route.r}`,     () => { F.route=null; render(); }]);
+  if (F.orig)            chips.push([`Origin: ${F.orig}`,       () => { F.orig=null;  render(); }]);
+  if (F.dest)            chips.push([`Dest: ${F.dest}`,         () => { F.dest=null;  render(); }]);
+  if (F.charterer)       chips.push([`Charterer: ${F.charterer}`,() => { F.charterer=null; render(); }]);
+  if (F.shipper)         chips.push([`Shipper: ${F.shipper}`,   () => { F.shipper=null; render(); }]);
+  if (gradeF)            chips.push([`Grade: ${gradeF}`,        () => { gradeF=""; render(); }]);
+  if (statusF !== "all") chips.push([`Status: ${statusF}`,      () => { statusF="all"; document.querySelectorAll(".status-tab").forEach(t=>t.classList.toggle("active",t.dataset.status==="all")); render(); }]);
 
   const bar = document.getElementById("chips-bar");
+  const summaryEl = document.getElementById("filter-summary");
+  if (summaryEl) {
+    if (chips.length === 0) {
+      summaryEl.style.display = "none";
+    } else {
+      summaryEl.style.display = "flex";
+      summaryEl.querySelector("#filter-summary-text").textContent =
+        chips.map(c=>c[0]).join("  ·  ");
+    }
+  }
+
   bar.innerHTML = chips.map((c,i) =>
     `<div class="chip">${c[0]}<span class="chip-x" onclick="chipRemove(${i})">✕</span></div>`
   ).join("");
@@ -825,6 +868,7 @@ function toggleOrig(v)  { F.orig      = F.orig===v      ? null : v; page=1; rend
 function toggleDest(v)  { F.dest      = F.dest===v      ? null : v; page=1; render(); }
 function toggleCharterer(v) { F.charterer = F.charterer===v ? null : v; page=1; render(); }
 function toggleShipper(v)   { F.shipper   = F.shipper===v   ? null : v; page=1; render(); }
+function filterGradePills() { renderGradePills(); }
 function toggleGrade(v) { gradeF = gradeF===v ? "" : v; page=1; render(); }
 
 // ── Drill toggles ─────────────────────────────────────────────────────────────
