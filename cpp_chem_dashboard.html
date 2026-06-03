@@ -99,6 +99,7 @@
   body.light .bar-label.orig { color: #2B5FCC; }
   body.light .bar-label.dest { color: #1A8A90; }
   body.light .bar-meta { color: #6B7494; }
+  body.light .bar-row { background: transparent; }
   body.light .bar-row:hover { background: #EEF2FC; }
   body.light .bar-row.active-route { background: #D8E8FC; }
   body.light .party-name { color: #1A1E2E; }
@@ -120,6 +121,21 @@
   body.light .dl-btn { border-color: #C0CCE8; color: #6B7494; }
   body.light .empty-msg { color: #6B7494; }
   body.light .live-dot { background: #1F9E62; box-shadow: 0 0 6px #1F9E62; }
+  /* Fix remaining hardcoded dark values */
+  body.light #chips-bar .chip {
+    background: #E8EEF8 !important;
+    border: 1px solid #C0CCE8 !important;
+    color: #1A1E2E !important;
+  }
+  body.light #chips-bar .chip-x { color: #6B7494 !important; }
+  body.light #filter-summary {
+    background: #EEF2FC !important;
+    border-color: #C0CCE8 !important;
+  }
+  body.light #clear-all {
+    border-color: #C0CCE8 !important;
+    color: #6B7494 !important;
+  }
   /* Logo theme swap */
   body:not(.light) .logo-light { display:none !important; }
   body:not(.light) .logo-dark  { display:inline !important; }
@@ -233,7 +249,7 @@
     transition: all .15s;
   }
   .grade-pill:hover, .grade-pill.active {
-    border-color: var(--c-chem); color: #f0d060; background: #1e1a08;
+    border-color: var(--c-chem); color: var(--c-chem); background: var(--surface2);
   }
 
   /* ── KPI strip ── */
@@ -259,8 +275,8 @@
     display: flex; align-items: center; gap: 6px;
     padding: 3px 10px 3px 12px;
     border-radius: 20px;
-    background: #1E2233;
-    border: 1px solid #303650;
+    background: var(--surface2);
+    border: 1px solid var(--border);
     font-size: 11px; color: var(--text);
   }
   .chip-x {
@@ -270,7 +286,7 @@
   .chip-x:hover { color: #ff6b6b; }
   #clear-all {
     display:none; padding: 3px 12px;
-    border-radius: 20px; border: 1px solid #303650;
+    border-radius: 20px; border: 1px solid var(--border);
     background: transparent; color: var(--muted);
     font-size: 11px; cursor: pointer;
     transition: all .15s;
@@ -304,6 +320,7 @@
   }
   .bar-row:hover { background: var(--surface2); }
   .bar-row.active-route { background: #1A2040; }
+  body.light .bar-row.active-route { background: #D0E4FC; }
   .bar-label {
     width: 160px; flex-shrink:0;
     font-size: 11px; color: var(--text);
@@ -337,6 +354,9 @@
   }
   .party-item:last-child { border-bottom:none; }
   .party-item:hover { background:var(--surface2); padding-left:6px; }
+  body.light .party-item { border-bottom-color: #E0E6F0; }
+  body.light .party-item:hover { background: #EEF2FC; }
+  body.light .party-item.active { color: var(--accent); }
   .party-item.active { color:var(--accent); }
   .party-name  { font-size:12px; }
   .party-meta  { font-family:var(--font-mono); font-size:10px; color:var(--muted); }
@@ -461,7 +481,7 @@
   <div class="live-dot"></div>
   <div>
     <div class="header-title">CPP &amp; Chems Live</div>
-    <div class="header-sub">Vortexa live voyages · Generated 03 Jun 2026 10:25 · Vortexa Live  - Jun 3, 2026 - 1780494377.csv</div>
+    <div class="header-sub">Vortexa live voyages · Generated 03 Jun 2026 10:28 · Vortexa Live  - Jun 3, 2026 - 1780494377.csv</div>
   </div>
   <!-- Logos — dark/light pairs -->
   <div style="display:flex;align-items:center;gap:14px;margin-left:auto;">
