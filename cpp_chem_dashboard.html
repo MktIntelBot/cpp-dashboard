@@ -68,9 +68,16 @@
     color: var(--accent);
   }
   body.light .pill.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #FFFFFF;
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #FFFFFF !important;
+  }
+  /* Override product-specific dark colours in light mode */
+  body.light .pill[data-prod].active,
+  body.light .pill[data-vt].active {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
+    color: #FFFFFF !important;
   }
   body.light .pill-dwt { opacity: .55; }
   body.light .drill-tab { color: #6B7494; }
@@ -81,6 +88,38 @@
   body.light .expand-row { color: var(--accent); }
   body.light .grade-pill { border-color: #C0CCE8; color: #3A4468; background: #FFFFFF; }
   body.light .grade-pill.active { border-color: var(--accent); color: var(--accent); background: #EEF2FC; }
+  /* KPI cards, panels, active filter chips */
+  body.light .kpi-card { background: #FFFFFF; border-color: #D0D6E8; }
+  body.light .kpi-value { color: #1A1E2E; }
+  body.light .kpi-label { color: #6B7494; }
+  body.light .kpi-sub   { color: #6B7494; }
+  body.light .panel { background: #FFFFFF; border-color: #D0D6E8; }
+  body.light .panel-title { color: #6B7494; }
+  body.light .bar-label { color: #1A1E2E; }
+  body.light .bar-label.orig { color: #2B5FCC; }
+  body.light .bar-label.dest { color: #1A8A90; }
+  body.light .bar-meta { color: #6B7494; }
+  body.light .bar-row:hover { background: #EEF2FC; }
+  body.light .bar-row.active-route { background: #D8E8FC; }
+  body.light .party-name { color: #1A1E2E; }
+  body.light .party-meta { color: #6B7494; }
+  body.light .chip { background: #E8EEF8; border-color: #C0CCE8; color: #1A1E2E; }
+  body.light .chip-x { color: #6B7494; }
+  body.light #filter-summary { background: #EEF2FC; border-color: #C0CCE8; }
+  body.light #clear-all { color: #6B7494; border-color: #C0CCE8; }
+  body.light .cls-badge { opacity: .9; }
+  body.light .header { border-bottom-color: #D0D6E8; }
+  body.light .header-title { color: #1A1E2E; }
+  body.light .header-sub { color: #6B7494; }
+  body.light .header-badge { background: #FFFFFF; border-color: #D0D6E8; color: #6B7494; }
+  body.light #b-voyages, body.light #b-vessels, body.light #b-parcels { color: #1A1E2E; }
+  body.light td { color: #1A1E2E; }
+  body.light th { color: #6B7494; }
+  body.light tr:hover td { background: #EEF2FC; }
+  body.light .pg-btn { border-color: #C0CCE8; color: #6B7494; }
+  body.light .dl-btn { border-color: #C0CCE8; color: #6B7494; }
+  body.light .empty-msg { color: #6B7494; }
+  body.light .live-dot { background: #1F9E62; box-shadow: 0 0 6px #1F9E62; }
   /* Logo theme swap */
   body:not(.light) .logo-light { display:none !important; }
   body:not(.light) .logo-dark  { display:inline !important; }
@@ -422,7 +461,7 @@
   <div class="live-dot"></div>
   <div>
     <div class="header-title">CPP &amp; Chems Live</div>
-    <div class="header-sub">Vortexa live voyages · Generated 03 Jun 2026 10:23 · Vortexa Live  - Jun 3, 2026 - 1780494377.csv</div>
+    <div class="header-sub">Vortexa live voyages · Generated 03 Jun 2026 10:25 · Vortexa Live  - Jun 3, 2026 - 1780494377.csv</div>
   </div>
   <!-- Logos — dark/light pairs -->
   <div style="display:flex;align-items:center;gap:14px;margin-left:auto;">
