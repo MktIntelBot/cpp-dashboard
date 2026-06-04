@@ -1321,8 +1321,8 @@ function renderTable() {
             title="Click to expand">${
           (r.origItinerary||r.origPort) + ' → ' + (r.destItinerary||r.destPort)
         }</td>
-        <td title="${r.charterer}">${(r.charterer||'')\.substring(0,20)}</td>
-        <td title="${r.shipper}">${(r.shipper||'')\.substring(0,20)}</td></tr>`).join("");
+        <td title="${r.charterer}">${(r.charterer||'').substring(0,20)}</td>
+        <td title="${r.shipper}">${(r.shipper||'').substring(0,20)}</td></tr>`).join("");
   }
 
   document.getElementById("pg-info").textContent = `${start+1}–${Math.min(start+PAGE_SIZE,total)} of ${total}`;
